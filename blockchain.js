@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const { createHash } = require('crypto');
-const signing = require('./signing');
-
+const { createHash } = require("crypto");
+const signing = require("./signing");
 
 /**
  * A simple signed Transaction class for sending funds from the signer to
  * another public key.
  */
+
 class Transaction {
   /**
    * The constructor accepts a hex private key for the sender, a hex
@@ -21,9 +21,12 @@ class Transaction {
    *   - signature: a unique signature generated from a combination of the
    *     other properties, signed with the provided private key
    */
-  constructor(privateKey, recipient, amount) {
-    // Enter your solution here
 
+  constructor(privateKey, recipient, amount) {
+    this.source = signing.getPublicKey(privateKey);
+    this.recipient = recipient;
+    this.amount = amount;
+    this.signature = signing.sign(privateKey, amount.toString());
   }
 }
 
@@ -45,7 +48,6 @@ class Block {
    */
   constructor(transactions, previousHash) {
     // Your code here
-
   }
 
   /**
@@ -59,7 +61,6 @@ class Block {
    */
   calculateHash(nonce) {
     // Your code here
-
   }
 }
 
@@ -79,7 +80,6 @@ class Blockchain {
    */
   constructor() {
     // Your code here
-
   }
 
   /**
@@ -87,7 +87,6 @@ class Blockchain {
    */
   getHeadBlock() {
     // Your code here
-
   }
 
   /**
@@ -96,7 +95,6 @@ class Blockchain {
    */
   addBlock(transactions) {
     // Your code here
-
   }
 
   /**
@@ -110,12 +108,11 @@ class Blockchain {
    */
   getBalance(publicKey) {
     // Your code here
-
   }
 }
 
 module.exports = {
   Transaction,
   Block,
-  Blockchain
+  Blockchain,
 };

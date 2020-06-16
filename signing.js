@@ -1,8 +1,7 @@
-'use strict';
+"use strict";
 
-const secp256k1 = require('secp256k1');
-const { randomBytes, createHash } = require('crypto');
-
+const secp256k1 = require("secp256k1");
+const { randomBytes, createHash } = require("crypto");
 
 /**
  * A function which generates a new random Secp256k1 private key, returning
@@ -13,10 +12,15 @@ const { randomBytes, createHash } = require('crypto');
  *   console.log(privateKey);
  *   // 'e291df3eede7f0c520fddbe5e9e53434ff7ef3c0894ed9d9cbcb6596f1cfe87e'
  */
-const createPrivateKey = () => {
-  // Enter your solution here
 
+const createPrivateKey = () => {
+  const random = randomBytes(32);
+  const hex = random.toString("hex");
+  return hex;
 };
+
+const privateKey = createPrivateKey();
+console.log(privateKey);
 
 /**
  * A function which takes a hexadecimal private key and returns its public pair
@@ -31,10 +35,15 @@ const createPrivateKey = () => {
  *   Remember that the secp256k1-node library expects raw bytes (i.e Buffers),
  *   not hex strings! You'll have to convert the private key.
  */
-const getPublicKey = privateKey => {
-  // Your code here
+const getPublicKey = (privateKey) => {
+  const buffer = Buffer.from(privateKey, "hex");
 
+  const pub = secp256k1.publicKeyCreate(buffer);
+  return pub.toString("hex");
 };
+
+const publicKey = getPublicKey(privateKey);
+console.log(publicKey);
 
 /**
  * A function which takes a hex private key and a string message, returning
@@ -49,10 +58,16 @@ const getPublicKey = privateKey => {
  *   Remember that you need to sign a SHA-256 hash of the message,
  *   not the message itself!
  */
-const sign = (privateKey, message) => {
-  // Your code here
 
+const sign = (privateKey, message) => {
+  const messges = createHash("sha256").update(message).digest();
+  const buffer = Buffer.from(privateKey, "hex");
+  const { signature } = secp256k1.sign(messges, buffer);
+  return signature.toString("hex");
 };
+
+const signature = sign(privateKey, "Hello World!");
+console.log(signature);
 
 /**
  * A function which takes a hex public key, a string message, and a hex
@@ -64,14 +79,19 @@ const sign = (privateKey, message) => {
  *   console.log( verify(publicKey, 'Hello World?', signature) );
  *   // false
  */
-const verify = (publicKey, message, signature) => {
-  // Your code here
 
+const verify = (publicKey, message, signature) => {
+  const msg = createHash("sha256").update(message).digest();
+  const buffer1 = Buffer.from(signature, "hex");
+  const buffer2 = Buffer.from(publicKey, "hex");
+  return secp256k1.verify(msg, buffer1, buffer2);
 };
+console.log(verify(publicKey, "Hello World!", signature));
+console.log(verify(publicKey, "Hello World?", signature));
 
 module.exports = {
   createPrivateKey,
   getPublicKey,
   sign,
-  verify
+  verify,
 };

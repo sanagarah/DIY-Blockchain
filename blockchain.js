@@ -88,11 +88,19 @@ class Blockchain {
    * Properties:
    *   - blocks: an array of blocks, starting with one genesis block
    */
+  constructor() {
+    const tran = [];
+    const genesisBlock = new Block(tran, null);
+    this.blocks = [genesisBlock];
+  }
 
   /**
    * Simply returns the last block added to the chain.
    */
-  getHeadBlock() {}
+  getHeadBlock() {
+    const length = this.blocks.length - 1;
+    return this.blocks[length];
+  }
 
   /**
    * Accepts an array of transactions, creating a new block with them and

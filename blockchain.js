@@ -107,7 +107,8 @@ class Blockchain {
    * adding it to the chain.
    */
   addBlock(transactions) {
-    // Your code here
+    const block = new Block(transactions, this.getHeadBlock().hash);
+    this.blocks.push(block);
   }
 
   /**

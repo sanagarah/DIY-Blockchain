@@ -26,7 +26,10 @@ class Transaction {
     this.source = signing.getPublicKey(privateKey);
     this.recipient = recipient;
     this.amount = amount;
-    this.signature = signing.sign(privateKey, amount.toString());
+    this.signature = signing.sign(
+      privateKey,
+      this.source + this.recipient + this.amount
+    );
   }
 }
 
@@ -46,10 +49,12 @@ class Block {
    *     used later when we make blocks mineable with our own PoW algorithm
    *   - hash: a unique hash string generated from the other properties
    */
-  constructor(transactions, previousHash) {
-    // Your code here
-  }
 
+  constructor(transactions, previousHash) {
+    this.transactions = transactions;
+    this.previousHash = previousHash;
+    this.nonce = 0;
+  }
   /**
    * Accepts a nonce, and generates a unique hash for the block. Updates the
    * hash and nonce properties of the block accordingly.
@@ -60,7 +65,12 @@ class Block {
    *   properties change.
    */
   calculateHash(nonce) {
-    // Your code here
+    const transactionString = this.transactions
+      .map((block) => block.signature)
+      .toString();
+    const hashing = this.previousHash + transactionString + nonce;
+    this.nonce = nonce;
+    this.hash = createHash("sha512").update(hashing).digest("hex");
   }
 }
 
@@ -78,16 +88,11 @@ class Blockchain {
    * Properties:
    *   - blocks: an array of blocks, starting with one genesis block
    */
-  constructor() {
-    // Your code here
-  }
 
   /**
    * Simply returns the last block added to the chain.
    */
-  getHeadBlock() {
-    // Your code here
-  }
+  getHeadBlock() {}
 
   /**
    * Accepts an array of transactions, creating a new block with them and

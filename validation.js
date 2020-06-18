@@ -1,7 +1,9 @@
-'use strict';
+"use strict";
 
-const { createHash } = require('crypto');
-const signing = require('./signing');
+const { createHash } = require("crypto");
+const signing = require("./signing");
+const blockchain = require("./blockchain");
+const { Blockchain } = require("./blockchain");
 
 /**
  * A simple validation function for transactions. Accepts a transaction
@@ -10,9 +12,17 @@ const signing = require('./signing');
  *   - were improperly signed
  *   - have been modified since signing
  */
-const isValidTransaction = transaction => {
-  // Enter your solution here
-
+const isValidTransaction = (transaction) => {
+  if (transaction.amount < 0) return false;
+  if (
+    !signing.verify(
+      transaction.source,
+      transaction.source + transaction.recipient + transaction.amount,
+      transaction.signature
+    )
+  )
+    return false;
+  return true;
 };
 
 /**
@@ -21,9 +31,9 @@ const isValidTransaction = transaction => {
  *   - their hash or any other properties were altered
  *   - they contain any invalid transactions
  */
-const isValidBlock = block => {
-  // Your code here
-
+const isValidBlock = (block) => {
+  if (block.calculateHash(block.nonce) !== block.hash) return false;
+  return true;
 };
 
 /**
@@ -36,9 +46,9 @@ const isValidBlock = block => {
  *   - contains any invalid blocks
  *   - contains any invalid transactions
  */
-const isValidChain = blockchain => {
-  // Your code here
-
+const isValidChain = (blockchain) => {
+  if (!blockchain.genesisBlock) return false;
+  return true;
 };
 
 /**
@@ -46,14 +56,13 @@ const isValidChain = blockchain => {
  * blockchain, mutating it for your own nefarious purposes. This should
  * (in theory) make the blockchain fail later validation checks;
  */
-const breakChain = blockchain => {
+const breakChain = (blockchain) => {
   // Your code here
-
 };
 
 module.exports = {
   isValidTransaction,
   isValidBlock,
   isValidChain,
-  breakChain
+  breakChain,
 };

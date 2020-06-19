@@ -2,8 +2,6 @@
 
 const { createHash } = require("crypto");
 const signing = require("./signing");
-const blockchain = require("./blockchain");
-const { Blockchain } = require("./blockchain");
 
 /**
  * A simple validation function for transactions. Accepts a transaction
@@ -33,6 +31,7 @@ const isValidTransaction = (transaction) => {
  */
 const isValidBlock = (block) => {
   if (block.calculateHash(block.nonce) !== block.hash) return false;
+  if (!isValidTransaction(block.transactions)) return false;
   return true;
 };
 
@@ -48,6 +47,16 @@ const isValidBlock = (block) => {
  */
 const isValidChain = (blockchain) => {
   if (!blockchain.genesisBlock) return false;
+  if (blockchain.blocks.map((t) => t.hash) == null && !block.genesisBlock)
+    return false;
+  if (
+    blockchain.blocks.map((t) => t.previousHash) == null &&
+    !block.genesisBlock
+  )
+    return false;
+  if (!isValidBlock(blockchain.blocks)) return false;
+  if (!isValidTransaction(blockchain.blocks.transactions)) return false;
+
   return true;
 };
 

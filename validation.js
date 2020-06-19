@@ -30,8 +30,16 @@ const isValidTransaction = (transaction) => {
  *   - they contain any invalid transactions
  */
 const isValidBlock = (block) => {
-  if (block.calculateHash(block.nonce) !== block.hash) return false;
-  if (!isValidTransaction(block.transactions)) return false;
+  const transactionString = block.transactions
+    .map((t) => t.signature)
+    .toString();
+  const toHash = block.previousHash + transactionString + block.nonce;
+
+  if (block.hash !== createHash("sha512").update(toHash).digest("hex")) {
+    return false;
+  }
+
+  if (!block.transactions.every(isValidTransaction)) return false;
   return true;
 };
 
@@ -45,19 +53,28 @@ const isValidBlock = (block) => {
  *   - contains any invalid blocks
  *   - contains any invalid transactions
  */
-const isValidChain = (blockchain) => {
-  if (!blockchain.genesisBlock) return false;
-  if (blockchain.blocks.map((t) => t.hash) == null && !block.genesisBlock)
-    return false;
-  if (
-    blockchain.blocks.map((t) => t.previousHash) == null &&
-    !block.genesisBlock
-  )
-    return false;
-  if (!isValidBlock(blockchain.blocks)) return false;
-  if (!isValidTransaction(blockchain.blocks.transactions)) return false;
 
-  return true;
+/**  if (!blockchain.genesisBlock) return false;
+  if (!isValidBlock(blockchain.blocks)) return false;
+  return blocks.map((b) => b.transactions).every(isValidTransaction); **/
+const isValidChain = (blockchain) => {
+  if (blockchain.blocks[0].previousHash !== null) {
+    return false;
+  }
+
+  for (let i = 1; i < blockchain.blocks.length; i++) {
+    if (blockchain.blocks[i].previousHash !== blockchain.blocks[i - 1].hash)
+      return false;
+  }
+
+  for (let i = 1; i < blockchain.blocks.length; i++) {
+    if (!isValidBlock(blockchain.blocks[i])) return false;
+  }
+
+  return blockchain.blocks
+    .map((b) => b.transactions)
+    .reduce((flat, t) => flat.concat(t), [])
+    .every(isValidTransaction);
 };
 
 /**
@@ -66,7 +83,7 @@ const isValidChain = (blockchain) => {
  * (in theory) make the blockchain fail later validation checks;
  */
 const breakChain = (blockchain) => {
-  // Your code here
+  blockchain.blocks[1].transactions[0].amount = 576579;
 };
 
 module.exports = {

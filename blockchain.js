@@ -121,7 +121,20 @@ class Blockchain {
    *   we make the blockchain mineable later.
    */
   getBalance(publicKey) {
-    // Your code here
+    return this.blocks.reduce((balance, block) => {
+      return (
+        balance +
+        block.transactions.reduce((sum, transaction) => {
+          if (transaction.recipient === publicKey) {
+            return sum + transaction.amount;
+          }
+          if (transaction.source === publicKey) {
+            return sum - transaction.amount;
+          }
+          return sum;
+        }, 0)
+      );
+    }, 0);
   }
 }
 

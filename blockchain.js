@@ -54,6 +54,7 @@ class Block {
     this.transactions = transactions;
     this.previousHash = previousHash;
     this.nonce = 0;
+    this.calculateHash(this.nonce);
   }
   /**
    * Accepts a nonce, and generates a unique hash for the block. Updates the

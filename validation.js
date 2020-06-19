@@ -54,9 +54,6 @@ const isValidBlock = (block) => {
  *   - contains any invalid transactions
  */
 
-/**  if (!blockchain.genesisBlock) return false;
-  if (!isValidBlock(blockchain.blocks)) return false;
-  return blocks.map((b) => b.transactions).every(isValidTransaction); **/
 const isValidChain = (blockchain) => {
   if (blockchain.blocks[0].previousHash !== null) {
     return false;
